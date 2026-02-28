@@ -1,344 +1,189 @@
-# 📦 Proyecto Semana 03: Sistema de Gestión con POO
+# 🌸 Nicolasse — Sistema de Gestión de Muebles y Decoración
 
-> **🎯 ÚNICO ENTREGABLE**: Este proyecto es el **único entregable obligatorio** para aprobar la semana.
-
-## 🏛️ Política de Dominios Únicos
-
-**Tu dominio fue asignado por el instructor al inicio del trimestre.** Este proyecto debe implementarse completamente dentro del contexto de tu dominio asignado.
-
-### ¿Por qué dominios únicos?
-
-- Previene copia entre compañeros
-- Fomenta implementaciones originales
-- Desarrolla capacidad de abstracción
-- Aplica conceptos de POO a contextos específicos
+> Sistema web de gestión de inventario para muebles, desarrollado con **Programación Orientada a Objetos (POO)** en JavaScript ES2023.
 
 ---
 
-## 🎯 Objetivo
+## 📁 Estructura del Proyecto
 
-Crear un sistema completo de gestión usando clases ES2023, herencia, encapsulación y todos los conceptos de POO aprendidos durante la semana, aplicado a tu dominio asignado.
-
----
-
-## 📋 Descripción
-
-Desarrollarás una aplicación web que permita gestionar entidades de tu dominio con:
-
-- Catálogo de elementos (con diferentes tipos/subclases)
-- Sistema de usuarios (diferentes roles)
-- Operaciones CRUD con validación
-- Sistema de estados y transiciones
-- Búsqueda y filtrado
+```
+3-proyecto/
+├── index.html        # Interfaz principal de la aplicación
+├── styles.css        # Estilos con tema pastel rosado y lila
+└── starter/
+    └── script.js     # Lógica del sistema con clases ES2023
+```
 
 ---
 
-## 🏗️ Arquitectura de Clases (Genérica)
+## 🧩 Arquitectura de Clases
 
-Debes adaptar esta estructura a tu dominio:
+### Jerarquía de Herencia
 
 ```
 BaseItem (clase base abstracta)
-├── ItemType1
-├── ItemType2
-└── ItemType3
+├── Couch         → Sofás y asientos
+├── Mirror        → Espejos decorativos
+└── Bed           → Camas y bases
 
-Person (clase base)
-├── UserRole1
-└── UserRole2
+Person (clase base de usuarios)
+├── Customer      → Clientes del sistema
+└── Admin         → Administradores
 
-MainSystem (clase principal)
-├── Transaction (operaciones)
-└── Record (historial)
+MainSystem        → Clase principal del sistema
 ```
 
-### 💡 Ejemplo: Planetario (NO es un dominio asignable)
+### `BaseItem` — Clase Base
+Campos privados encapsulados con `#`:
 
-```
-CelestialBody (clase base abstracta)
-├── Planet
-├── Star
-└── Satellite
-    ├── NaturalSatellite
-    └── ArtificialSatellite
+| Campo       | Tipo      | Descripción                     |
+|-------------|-----------|----------------------------------|
+| `#id`       | `string`  | UUID generado automáticamente    |
+| `#name`     | `string`  | Nombre del elemento              |
+| `#description` | `string` | Descripción del mueble         |
+| `#category` | `string`  | Categoría (Sala, Baño, etc.)     |
+| `#priority` | `string`  | Prioridad del elemento           |
+| `#dimension`| `string`  | Dimensiones físicas              |
+| `#color`    | `string`  | Color del mueble                 |
+| `#material` | `string`  | Material principal               |
+| `#active`   | `boolean` | Estado activo/inactivo           |
+| `#createdAt`| `string`  | Fecha de creación (ISO)          |
+| `#updatedAt`| `string`  | Fecha de última actualización    |
 
-Person (clase base)
-├── Visitor
-└── Astronomer
-
-Observatory (clase principal)
-├── Observation (observaciones)
-└── Event (eventos astronómicos)
-```
+**Métodos principales:**
+- `activate()` / `deactivate()` — Cambia el estado del elemento
+- `getInfo()` — Abstracto, implementado en cada clase hija
+- `getType()` — Retorna el nombre de la clase
 
 ---
 
-## 📝 Requisitos Técnicos
+### Clases Derivadas
 
-### 1. Clase Base `BaseItem` (Abstracta)
+#### `Couch` — Sofás
+```js
+new Couch(name, description, category, priority, dimension, color, material, fabricType)
+```
+- `fabricType` → Tipo de tela (Lino, Cuero, etc.)
 
-Tu clase base debe incluir:
+#### `Mirror` — Espejos
+```js
+new Mirror(name, description, category, priority, dimension, color, material, style, frameType)
+```
+- `style` → Estilo visual (Moderno, Clásico...)
+- `frameType` → Tipo de marco (Circular, Rectangular...)
 
-```javascript
-class BaseItem {
-  // Campos privados obligatorios
-  #id;
-  #name;
-  #active;
-  #location;
-  #dateCreated;
+#### `Bed` — Camas
+```js
+new Bed(name, description, category, priority, dimension, color, material, bedType)
+```
+- `bedType` → Tamaño de la cama (Queen, King, Individual...)
 
-  constructor(name, location) { /* ... */ }
+---
 
-  // Getters obligatorios
-  get id() { /* ... */ }
-  get name() { /* ... */ }
-  get isActive() { /* ... */ }
-  get location() { /* ... */ }
-  get dateCreated() { /* ... */ }
+### `Person` y Roles
 
-  // Setter con validación
-  set location(value) { /* validar y asignar */ }
+#### `Customer` — Cliente
+- `#purchaseCount` — Contador de compras
+- `#favoriteCategory` — Categoría favorita
+- `addPurchase()` — Incrementa el contador
 
-  // Métodos de estado
-  activate() { /* ... */ }
-  deactivate() { /* ... */ }
+#### `Admin` — Administrador
+- `#permissions` — Lista de permisos
+- `#lastLogin` — Último inicio de sesión
+- `login()` — Registra el momento del login
 
-  // Método abstracto - debe sobrescribirse
-  getInfo() {
-    throw new Error('Método getInfo() debe ser implementado');
-  }
+---
 
-  // Método para obtener el tipo
-  getType() {
-    return this.constructor.name;
-  }
-}
+### `MainSystem` — Sistema Principal
+
+```js
+const system = new MainSystem();
 ```
 
-### 2. Clases Derivadas (mínimo 3)
+| Método                    | Descripción                          |
+|---------------------------|--------------------------------------|
+| `addItem(item)`           | Agrega un elemento al catálogo       |
+| `removeItem(id)`          | Elimina un elemento por ID           |
+| `findItem(id)`            | Busca un elemento por ID             |
+| `getAllItems()`            | Retorna todos los elementos          |
+| `searchByName(query)`     | Búsqueda case-insensitive por nombre |
+| `filterByType(type)`      | Filtra por tipo de clase             |
+| `filterByStatus(active)`  | Filtra por estado activo/inactivo    |
+| `getStats()`              | Retorna estadísticas del sistema     |
+| `addUser(user)`           | Registra un usuario                  |
+| `findUserByEmail(email)`  | Busca un usuario por email           |
 
-Crea al menos 3 clases que extiendan tu clase base:
-
-- Propiedades privadas adicionales específicas
-- Implementación del método `getInfo()`
-- Getters para todas las propiedades
-- Métodos específicos del tipo
-
-### 3. Clase `Person` (Base para usuarios)
-
-```javascript
-class Person {
-  #id;
-  #name;
-  #email;
-  #registrationDate;
-
-  constructor(name, email) { /* ... */ }
-
-  get id() { /* ... */ }
-  get name() { /* ... */ }
-  get email() { /* ... */ }
-
-  set email(value) { /* validar formato */ }
-}
-```
-
-### 4. Clases de Roles (mínimo 2)
-
-- Diferentes permisos/capacidades
-- Métodos específicos del rol
-- Propiedades privadas adicionales
-
-### 5. Clase Principal del Sistema
-
-```javascript
-class MainSystem {
-  #items = [];
-  #users = [];
-  #transactions = [];
-
-  // Bloque estático para configuración
-  static {
-    this.VERSION = '1.0.0';
-    this.MAX_ITEMS = 1000;
-  }
-
-  // Métodos CRUD
-  addItem(item) { /* ... */ }
-  removeItem(id) { /* ... */ }
-  findItem(id) { /* ... */ }
-
-  // Métodos de búsqueda
-  searchByName(query) { /* ... */ }
-  filterByType(type) { /* ... */ }
-
-  // Estadísticas
-  getStats() { /* ... */ }
-}
+**Propiedades estáticas:**
+```js
+MainSystem.VERSION       // '1.0.0'
+MainSystem.MAX_ITEMS     // 1000
+MainSystem.SYSTEM_NAME   // 'Sistema de Muebles y Decoración'
 ```
 
 ---
 
-## 💡 Ejemplos de Adaptación por Dominio
+## 🖥️ Interfaz
 
-| Concepto | Planetario 🔭 | Acuario 🐠 |
-|----------|---------------|------------|
-| **BaseItem** | CelestialBody | MarineSpecies |
-| **Tipo 1** | Planet | Fish |
-| **Tipo 2** | Star | Mammal |
-| **Tipo 3** | Satellite | Invertebrate |
-| **Rol 1** | Visitor | Guest |
-| **Rol 2** | Astronomer | Biologist |
-| **Sistema** | Observatory | Aquarium |
-| **Transacción** | Observation | Feeding |
+La aplicación cuenta con **4 pestañas** de navegación:
 
----
+| Pestaña         | Descripción                                      |
+|-----------------|--------------------------------------------------|
+| 📋 Catálogo     | Lista de muebles con filtros y búsqueda          |
+| 🙎🏻‍♀️ Usuarios    | Gestión de clientes y administradores            |
+| 🔄 Transacciones | Historial de operaciones                        |
+| 📊 Estadísticas | Totales, activos, inactivos y desglose por tipo  |
 
-## 🎨 Interfaz de Usuario
-
-### Secciones Requeridas
-
-1. **Header**: Nombre del sistema y estadísticas
-2. **Formulario**: Crear/editar elementos
-3. **Lista de Elementos**: Con información según tipo
-4. **Filtros**: Por tipo, estado, búsqueda
-5. **Detalles**: Modal con información completa
-
-### Estados Visuales
-
-- Elementos activos/inactivos
-- Diferentes iconos por tipo
-- Badges de categoría
+### Funcionalidades del Catálogo
+- 🔍 **Búsqueda** en tiempo real por nombre
+- 🗂️ **Filtro** por tipo de mueble (Couch / Mirror / Bed)
+- ✅ **Filtro** por estado (Activo / Inactivo)
+- ➕ **Agregar** nuevos elementos desde el formulario
+- 🔄 **Activar / Desactivar** elementos individuales
+- 🗑️ **Eliminar** con confirmación
 
 ---
 
-## ✅ Criterios de Evaluación
+## ⚙️ Características ES2023 Implementadas
 
-### Clases y Herencia (40 puntos)
-
-- [ ] Clase base abstracta correcta (10pts)
-- [ ] Mínimo 3 clases derivadas (10pts)
-- [ ] Uso correcto de `extends` y `super` (10pts)
-- [ ] Métodos sobrescritos correctamente (10pts)
-
-### Encapsulación (30 puntos)
-
-- [ ] Campos privados `#` correctos (10pts)
-- [ ] Getters y setters apropiados (10pts)
-- [ ] Validación en setters (10pts)
-
-### Características Modernas (30 puntos)
-
-- [ ] Static blocks para configuración (10pts)
-- [ ] Métodos estáticos apropiados (10pts)
-- [ ] Integración con DOM funcional (10pts)
-
-**Total: 100 puntos**
-**Mínimo para aprobar: 70 puntos**
+- ✅ Campos privados con `#`
+- ✅ Getters y setters con validación
+- ✅ Herencia con `extends` y `super()`
+- ✅ Método abstracto `getInfo()` en clases hijas
+- ✅ Static block en `MainSystem`
+- ✅ Métodos estáticos de utilidad
+- ✅ `crypto.randomUUID()` para generación de IDs
+- ✅ Operador nullish coalescing `??`
+- ✅ Spread operator `...` en getters de colecciones
 
 ---
 
-## 🚀 Cómo Empezar
+## 🚀 Cómo Ejecutar
 
-### 1. Define tu Jerarquía de Clases
+1. Clona o descarga el proyecto
+2. Abre `index.html` en el navegador (o usa Live Server en VS Code)
+3. No requiere instalación de dependencias
 
-Dibuja primero tu arquitectura de clases adaptada a tu dominio.
-
-### 2. Implementa de Abajo hacia Arriba
-
-1. Clase base `BaseItem`
-2. Clases derivadas (tipos de elementos)
-3. Clase `Person`
-4. Clases de roles
-5. Clase principal del sistema
-6. Integración con DOM
-
-### 3. Prueba Incrementalmente
-
-Después de cada clase, crea instancias de prueba en la consola.
-
----
-
-## 💡 Pistas y Consejos
-
-### Campos Privados
-
-```javascript
-class Example {
-  #privateField;
-
-  constructor(value) {
-    this.#privateField = value;
-  }
-
-  get privateField() {
-    return this.#privateField;
-  }
-}
-```
-
-### Herencia
-
-```javascript
-class Child extends Parent {
-  constructor(parentProp, childProp) {
-    super(parentProp); // Llamar al padre primero
-    this.#childProp = childProp;
-  }
-}
-```
-
-### Static Blocks
-
-```javascript
-class Config {
-  static {
-    this.settings = {
-      theme: 'dark',
-      language: 'es'
-    };
-  }
-}
+```bash
+# Con Live Server (recomendado)
+# Click derecho en index.html → "Open with Live Server"
 ```
 
 ---
 
-## 🎓 Conceptos Aplicados
+## 🎨 Diseño Visual
 
-| Concepto | Uso en el Proyecto |
-|----------|-------------------|
-| **Clases** | Definir entidades del dominio |
-| **Herencia** | Especializar tipos de elementos |
-| **Campos privados** | Encapsular datos sensibles |
-| **Getters/Setters** | Controlar acceso a propiedades |
-| **Métodos estáticos** | Utilidades y configuración |
-| **Static blocks** | Inicialización compleja |
+El proyecto usa un tema **pastel suave** con:
+- 🌸 Fondo degradado rosado (`#fdf0f5`) y lila (`#ede0f7`)
+- Tipografía *Playfair Display* para títulos y *DM Sans* para cuerpo
+- Tarjetas con efecto glassmorphism y sombras suaves
+- Botones con gradiente rosado → lila
+- Animaciones sutiles en hover y entrada de elementos
 
 ---
 
-## ⏱️ Tiempo Estimado
+## 📌 Convenciones de Código
 
-- **Definir arquitectura**: 30 minutos
-- **Clases base**: 1 hora
-- **Clases derivadas**: 1.5 horas
-- **Sistema principal**: 1 hora
-- **Integración DOM**: 1 hora
-
-**Total: ~5 horas**
-
----
-
-## 📋 Entregables
-
-1. **Código funcional** con jerarquía de clases completa
-2. **Diagrama de clases** (puede ser texto o imagen)
-3. **README personal** explicando tu implementación
-4. **Todo el código debe usar**:
-   - Nomenclatura técnica en inglés
-   - Comentarios en español
-   - Sintaxis ES2023 (campos privados `#`, static blocks)
-
----
-
-_Proyecto Week-03 - JavaScript Moderno Bootcamp_
+- **Comentarios** → En español
+- **Nomenclatura técnica** (clases, variables, métodos) → En inglés
+- **Validaciones** → En setters de cada clase
+- **Inmutabilidad de colecciones** → Se retornan copias con spread (`[...array]`)

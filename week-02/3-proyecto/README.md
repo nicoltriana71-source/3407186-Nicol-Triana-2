@@ -37,12 +37,12 @@ Cada producto tiene estas propiedades específicas de mi dominio:
 
 | Propiedad     | Tipo    | Descripción                                             |
 |---------------|---------|---------------------------------------------------------|
-| `id`          |
+| `id`          | Number  | Se le asigna a cada producto 
 | `name`        | String  | Nombre del producto (ej. "Sofá Esquinero Roma")         |
 | `description` | String  | Descripción del material, dimensiones y características |
 | `category`    | String  | Tipo de producto (sala, dormitorio, decoración, etc.)   |
 | `priority`    | String  | Nivel de urgencia de reposición (bajo / medio / alto)   |
-| `precio`      | Number  | Precio de venta en pesos colombianos (COP)              |
+| `active`      | String  | Precio de venta en pesos colombianos (COP)              |
 | `stock`       | Number  | Unidades disponibles en inventario                      |
 | `fechaIngreso`| String  | Fecha en que el producto ingresó al catálogo            |
 | `active`      | Boolean | Si el producto está activo (visible en tienda) o no     |
